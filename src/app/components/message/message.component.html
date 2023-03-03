@@ -1,0 +1,9 @@
+<div id="messages">
+  <button class="btn btn-primary" (click)="sendPublicMessage()">PUBLICO</button>
+  <button class="btn btn-primary" (click)="sendPrivateMessage()">PRIVADO</button>
+  <h2>Received messages</h2>
+  <ol>
+    <!-- we will use Angular binding to populate list of messages -->
+    <li *ngFor="let message of messages" >{{message}}</li>
+  </ol>
+</div>
