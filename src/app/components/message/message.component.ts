@@ -1,50 +1,57 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {RxStompService} from "../../pages/home/service/rx-stomp.service";
 import {Message} from "../../model/message";
+import {ActivatedRoute} from "@angular/router";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-message',
   templateUrl: './message.component.html',
   styleUrls: ['./message.component.scss']
 })
-export class MessageComponent implements OnInit{
+export class MessageComponent implements OnInit, OnDestroy{
 
   messages: string[] = [];
-  constructor(private rxStompService: RxStompService) {}
+  private readonly controlNumber: number;
+  private readonly user: string;
+  private readonly userSubcribe: Subscription
+  private readonly queueSubcribe: Subscription
 
-  ngOnInit(): void {
-    this.rxStompService.watch('/topic/broadcast').subscribe((message) => {
-      console.log(message.body)
+  constructor(private rxStompService: RxStompService,
+              private activatedRoute: ActivatedRoute) {
+
+    this.controlNumber = this.activatedRoute.snapshot.queryParams['number'];
+    this.user = this.activatedRoute.snapshot.queryParams['user'];
+
+    this.userSubcribe = this.rxStompService.watch(`/user/${(this.user)}/private`).subscribe((message) => {
+      console.log(JSON.parse(message.body))
       this.messages.push(message.body);
     });
-    this.rxStompService.watch('/user/jefao/private').subscribe((message) => {
+
+    this.queueSubcribe = this.rxStompService.watch(`/user/${(this.controlNumber)}/queue`).subscribe((message) => {
       console.log(message.body)
       this.messages.push(message.body);
     });
   }
 
-  sendPublicMessage() {
-    const message: Message = {
-      action: 'SEND_MESSAGE',
-      controlNumber: 100023,
-      from: 'user1',
-      to: 'user2',
-      message: 'publilco'
-    };
-    this.rxStompService.publish({ destination: '/wip/public', body: JSON.stringify(message) });
+  ngOnInit(): void {
+
   }
 
   sendPrivateMessage() {
     const message: Message = {
       action: 'SEND_MESSAGE',
-      controlNumber: 100023,
+      controlNumber: this.controlNumber,
       from: 'user1',
-      to: 'user2',
+      to: this.user,
       message: 'privado'
     };
     this.rxStompService.publish({ destination: '/wip/private-message', body: JSON.stringify(message) });
   }
 
-
+  ngOnDestroy(): void {
+    this.userSubcribe.unsubscribe();
+    this.queueSubcribe.unsubscribe();
+  }
 
 }
