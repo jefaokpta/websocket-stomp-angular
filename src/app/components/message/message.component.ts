@@ -14,8 +14,8 @@ export class MessageComponent implements OnInit, OnDestroy{
   messages: string[] = [];
   private readonly controlNumber: number;
   private readonly user: string;
-  private readonly userSubcribe: Subscription
-  private readonly queueSubcribe: Subscription
+  private readonly userSubscribe: Subscription
+  private readonly queueSubscribe: Subscription
 
   constructor(private rxStompService: RxStompService,
               private activatedRoute: ActivatedRoute) {
@@ -23,12 +23,12 @@ export class MessageComponent implements OnInit, OnDestroy{
     this.controlNumber = this.activatedRoute.snapshot.queryParams['number'];
     this.user = this.activatedRoute.snapshot.queryParams['user'];
 
-    this.userSubcribe = this.rxStompService.watch(`/user/${(this.user)}/private`).subscribe((message) => {
+    this.userSubscribe = this.rxStompService.watch(`/user/${(this.user)}/private`).subscribe((message) => {
       console.log(JSON.parse(message.body))
       this.messages.push(message.body);
     });
 
-    this.queueSubcribe = this.rxStompService.watch(`/user/${(this.controlNumber)}/queue`).subscribe((message) => {
+    this.queueSubscribe = this.rxStompService.watch(`/user/${(this.controlNumber)}/queue`).subscribe((message) => {
       console.log(message.body)
       this.messages.push(message.body);
     });
@@ -50,8 +50,8 @@ export class MessageComponent implements OnInit, OnDestroy{
   }
 
   ngOnDestroy(): void {
-    this.userSubcribe.unsubscribe();
-    this.queueSubcribe.unsubscribe();
+    this.userSubscribe.unsubscribe();
+    this.queueSubscribe.unsubscribe();
   }
 
 }
