@@ -3,6 +3,7 @@ import { RxStompConfig } from '@stomp/rx-stomp';
 export const myRxStompConfig: RxStompConfig = {
   // Which server?
   brokerURL: 'ws://localhost:8080/stomp-endpoint',
+  // brokerURL: 'ws://asterisk.jpbx.com.br/stomp-endpoint',
 
 
   // Headers

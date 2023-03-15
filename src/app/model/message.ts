@@ -1,8 +1,8 @@
 export interface Message {
   action: string;
   controlNumber: number;
-  from: string;
-  to: string;
-  message: string;
+  agent: string;
+  message?: string;
+  contactId?: number;
 
 }
