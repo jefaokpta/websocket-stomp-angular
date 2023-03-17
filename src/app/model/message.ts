@@ -1,8 +1,8 @@
 export interface Message {
   action: string;
   controlNumber: number;
-  agent: string;
+  whatsapp: string;
   message?: string;
-  contactId?: number;
+  contacts?: any[];
 
 }

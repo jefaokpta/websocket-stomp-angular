@@ -2,7 +2,8 @@
   <button class="btn btn-primary" (click)="sendPrivateMessage()">MSG PRIVADA</button>
   <button class="btn btn-primary" (click)="loadChat()">LOAD CHAT</button>
   <button class="btn btn-primary" (click)="loadQueue()">LOAD QUEUE</button>
-  <h2>Received messages Agent {{agent}}</h2>
+  <button class="btn btn-primary" (click)="contactAttended()">CONTACT ATTENDED</button>
+  <h2>Received messages Contato {{whatsapp}}</h2>
   <ol>
     <li *ngFor="let message of messages" >{{message}}</li>
   </ol>
