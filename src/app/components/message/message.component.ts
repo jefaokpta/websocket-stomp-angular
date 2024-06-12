@@ -16,16 +16,17 @@ export class MessageComponent implements OnInit, OnDestroy{
   // readonly agent: string;
 
   whatsapp = '5511938065778'
-  controlNumber = 100023
+  controlNumber = 900023
+  agent = '2000'
   private readonly userSubscribe: Subscription
   private readonly queueSubscribe: Subscription
 
   constructor(private rxStompService: RxStompService,
               private activatedRoute: ActivatedRoute) {
-    
+
     // this.controlNumber = this.activatedRoute.snapshot.queryParams['number'];
     // this.agent = this.activatedRoute.snapshot.queryParams['agent'];
-    const websocketUser = `${this.controlNumber}-${this.whatsapp}`
+    const websocketUser = `${this.controlNumber}-${this.agent}`
     this.userSubscribe = this.rxStompService.watch(`/user/${websocketUser}/private`).subscribe((message) => {
       const messageID = message.headers['message-id']
       console.log(messageID.substring(0, messageID.lastIndexOf('-')))
@@ -69,6 +70,17 @@ export class MessageComponent implements OnInit, OnDestroy{
       action: 'LOAD_QUEUE',
       controlNumber: this.controlNumber,
       whatsapp: this.whatsapp,
+      agent: '2000',
+      departments: [
+        {
+          id: 1,
+          title: 'Atendimento',
+        },
+        {
+          id: 2,
+          title: 'Financeiro',
+        },
+      ],
     };
     this.rxStompService.publish({ destination: '/wip/action-message', body: JSON.stringify(message) });
   }
