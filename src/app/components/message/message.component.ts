@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {RxStompService} from "../../pages/home/service/rx-stomp.service";
 import {Message} from "../../model/message";
-import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 
 @Component({
@@ -12,20 +11,14 @@ import {Subscription} from "rxjs";
 export class MessageComponent implements OnInit, OnDestroy{
 
   messages: string[] = [];
-  // private readonly controlNumber: number;
-  // readonly agent: string;
 
   whatsapp = '5511938065778'
   controlNumber = 900023
   agent = '2000'
   private readonly userSubscribe: Subscription
-  private readonly queueSubscribe: Subscription
 
-  constructor(private rxStompService: RxStompService,
-              private activatedRoute: ActivatedRoute) {
+  constructor(private rxStompService: RxStompService) {
 
-    // this.controlNumber = this.activatedRoute.snapshot.queryParams['number'];
-    // this.agent = this.activatedRoute.snapshot.queryParams['agent'];
     const websocketUser = `${this.controlNumber}-${this.agent}`
     this.userSubscribe = this.rxStompService.watch(`/user/${websocketUser}/private`).subscribe((message) => {
       const messageID = message.headers['message-id']
@@ -34,35 +27,12 @@ export class MessageComponent implements OnInit, OnDestroy{
       this.messages.push(message.body);
     });
 
-    this.queueSubscribe = this.rxStompService.watch(`/user/${(this.controlNumber)}/queue`).subscribe((message) => {
-      console.log(message.body)
-      this.messages.push(message.body);
-    });
   }
 
   ngOnInit(): void {}
 
-  sendPrivateMessage() {
-    const message: Message = {
-      action: 'SEND_MESSAGE',
-      controlNumber: this.controlNumber,
-      whatsapp: this.whatsapp,
-    };
-    this.rxStompService.publish({ destination: '/wip/action-message', body: JSON.stringify(message) });
-  }
-
   ngOnDestroy(): void {
     this.userSubscribe.unsubscribe();
-    this.queueSubscribe.unsubscribe();
-  }
-
-  loadChat() {
-    const message: Message = {
-      action: 'LOAD_CHAT',
-      controlNumber: this.controlNumber,
-      whatsapp: this.whatsapp,
-    };
-    this.rxStompService.publish({ destination: '/wip/action-message', body: JSON.stringify(message) });
   }
 
   loadQueue() {
@@ -85,12 +55,4 @@ export class MessageComponent implements OnInit, OnDestroy{
     this.rxStompService.publish({ destination: '/wip/action-message', body: JSON.stringify(message) });
   }
 
-  contactAttended() {
-    const message: Message = {
-      action: 'CONTACT_ATTENDED',
-      controlNumber: this.controlNumber,
-      whatsapp: this.whatsapp,
-    };
-    this.rxStompService.publish({ destination: '/wip/action-message', body: JSON.stringify(message) });
-  }
 }
